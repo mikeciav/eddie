@@ -148,5 +148,9 @@ class Eddie{
 	public function cancelAllOrders(){
 		return $this->callAPI("DELETE", "/orders");
 	}
+
+	public function getTicker(){
+		return $this->callAPI("GET", "/products/ETH-USD/ticker");
+	}
 }
 ?>

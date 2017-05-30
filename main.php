@@ -18,7 +18,6 @@ $now = date(DATE_ATOM, time());
 $limit_time = date(DATE_ATOM, time() - (CANDLE_WIDTH*LONG_TERM_EMA_PERIOD));
 
 $candles = $eddie->getCandles($limit_time, $now, $candle_width);
-//var_dump($candles2);
 
 //Extract closing prices
 //Omit current candle from these calculations as it is too volatile
@@ -43,8 +42,15 @@ else{
 	echo "Long term EMA: " . $ema_l . "\n";
 }
 
-$raw_accounts = $eddie->getAccounts();
+//Only swap if there is enough separation between short and long term EMA
+if(abs($ema_s - $ema_l) < MIN_SEPARATION){
+	echo "Exiting - Not enough separation between short and long term EMA.\n
+			Required: " . MIN_SEPARATION . "\n
+			Actual: ". abs($ema_s - $ema_l) . "\n";
+	exit(0);
+}
 
+$raw_accounts = $eddie->getAccounts();
 $accounts = array();
 $eth_account = null;
 $usd_account = null;
@@ -52,13 +58,6 @@ foreach($raw_accounts as $account){
 	$accounts[$account->currency] = $account;
 }
 
-//Only swap if there is enough separation between short and long term EMA
-if(abs($ema_s - $ema_l) < 0.02){
-	echo "Exiting - Not enough separation between short and long term EMA.\n
-			Required: " . MIN_SEPARATION . "\n
-			Actual: ". abs($ema_s - $ema_l) . "\n";
-	exit(0);
-}
 echo "\n";
 
 $side = "";
@@ -69,12 +68,9 @@ if($ema_s > $ema_l){
 	$side = "buy";
 	$size = $accounts["USD"]->balance;
 	if($accounts["USD"]->balance  < 0.01){ //Minimum transaction = 1 cent
-		echo "Exiting: No funds available.\n";
+		echo "Exiting - No funds available.\n";
 		exit(0);
 	}
-	$eddie->cancelAllOrders();
-	$eddie->buyETH($accounts["USD"]->balance);
-
 }
 else{
 	//Sell
@@ -85,11 +81,50 @@ else{
 		echo "Exiting - No funds available.\n";
 		exit(0);
 	}
-	$eddie->cancelAllOrders();
-	$eddie->sellETH($accounts["ETH"]->balance);
+}
+$price = orderProcedure($eddie, $side, $side);
+if($price < 0){
+	echo "Exiting - failed to fulfill an order in a reasonable time\n";
+	exit(0);
 }
 
+//Log transaction
+if($side == "buy"){
+	$size = $size/$price;
+}
 $log = new Logger("log/log.csv");
-//$log->logTransaction($side, $size, )
+$log->logTransaction($side, $size, $price);
+
+//This function will repeatedly match the best bid or ask on the book until an order is fulfilled
+//Because oldest orders are honored first, this function only cancels and replaces an order if the price changes
+// $eddie = reference to the Eddie object
+// $side = buy or sell
+// $size = amount of ETH to sell, or amount of USD to buy ETH with (conversion will happen based on best bid price)
+//Returns - the bid or ask price the order was honored at
+function orderProcedure(&$eddie, $side, $size){
+	$current_offer = -1;
+	do{
+		$ticker = $eddie->getTicker();
+		if($side == "buy"){
+			if($current_offer != $ticker->bid){
+				$current_offer = $ticker->bid;
+				$eddie->cancelAllOrders();
+				//Convert USD to amount of ETH you can buy using the best current offer
+				$eddie->buyETHLimit($size/$current_offer, $current_offer);
+			}
+		}
+		else{
+			if($current_offer != $ticker->ask){
+				$current_offer = $ticker->ask;
+				$eddie->cancelAllOrders();
+				$eddie->sellETHLimit($size, $current_offer);
+			}
+		}
+		sleep(1); //To avoid spamming the exchange and getting banned
+	} while(!empty($eddie->getOrders()));
+
+	return $current_offer;
+}
+
 
 ?>
