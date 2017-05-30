@@ -22,17 +22,6 @@ $candles = $eddie->getCandles($limit_time, $now, $candle_width);
 
 //Extract closing prices
 //Omit current candle from these calculations as it is too volatile
-/*
-$closes1 = array();
-foreach($candles1 as $candle){
-	$closes1[] = $candle[4];
-}
-
-$closes2 = array();
-foreach($candles2 as $candle){
-	$closes2[] = $candle[4];
-}
-*/
 $closes1 = array();
 for($i=1;$i<SHORT_TERM_EMA_PERIOD;$i+=1){
 	$closes1[] = $candles[$i][4];
