@@ -23,8 +23,9 @@ class Logger{
 	
 	public function logTransaction($side, $size, $price){
 		$this->tweetTransaction($side);
-		$total = ($side == "buy") ? $size / $price : $size * $price;
-		$string = $side . "," . $size . "," . $price . "," . $total;
+		$date = date("Y-m-d h:i:s A", time());
+		$total = $size * $price;
+		$string = $date . "," . $side . "," . $size . "," . $price . "," . $total;
 		return file_put_contents($this->path, $string.PHP_EOL , FILE_APPEND | LOCK_EX);
 	}
 
