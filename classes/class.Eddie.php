@@ -25,41 +25,51 @@ class Eddie{
 	    $curl = curl_init();
 
 	    $timestamp = time();
-	    $signature = $this->cb->signature($url, false, $timestamp, $method);
-	    echo $method . "---" . $timestamp . "---" . $url . "\n";
-	    curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-	    					"CB-ACCESS-KEY: " . API_KEY,
-	    					"CB-ACCESS-TIMESTAMP: " . $timestamp,
-	    					"CB-ACCESS-PASSPHRASE: " . API_PASSPHRASE,
-	    					"CB-ACCESS-SIGN: " . $signature,
-	    					"User-Agent: mciav5"
-	    				)
-	    			);
+	    $data_enc = "";
+	    if($data && $method == "POST"){
+			$data_enc = json_encode($data);
+	    }
+	    $signature = $this->cb->signature($url, $data_enc, $timestamp, $method);
 
 	    $url = "https://api.gdax.com" . $url;
 
+	    $header_params = array(
+				"CB-ACCESS-KEY: " . API_KEY,
+				"CB-ACCESS-TIMESTAMP: " . $timestamp,
+				"CB-ACCESS-PASSPHRASE: " . API_PASSPHRASE,
+				"CB-ACCESS-SIGN: " . $signature,
+				"Content-Type: application/json",
+				"User-Agent: mciav5"
+		);
+
 	    switch ($method)
 	    {
+			case "GET":
+				if($data){
+					$url .= "?" . http_build_query($data);
+				}
+			break;
 	        case "POST":
 	            curl_setopt($curl, CURLOPT_POST, 1);
-
-	            if ($data)
-	                //curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-	                $url = sprintf("%s?%s", $url, http_build_query($data));
-	            break;
+	            curl_setopt($curl, CURLOPT_POSTFIELDS, $data_enc);
+	        break;
 	        case "PUT":
 	            curl_setopt($curl, CURLOPT_PUT, 1);
-	            break;
-	        default:
-	            if ($data)
-	                $url = sprintf("%s?%s", $url, http_build_query($data));
+	        break;
+	        case "DELETE":
+				curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+	        break;
+
 	    }
+
+	    curl_setopt($curl, CURLOPT_HTTPHEADER, $header_params);
 
 	    curl_setopt($curl, CURLOPT_URL, $url);
 	    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 
+	    //curl_setopt($curl, CURLOPT_VERBOSE, true);
+
 	    $result = curl_exec($curl);
-	    var_dump($result);
 
 	    curl_close($curl);
 

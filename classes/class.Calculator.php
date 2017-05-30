@@ -16,12 +16,29 @@ class Calculator{
 		return array_sum($closes) / count($closes);
 	}
 
+	//This EMA calculation uses the SMA of the set of closes as the seed
 	public function EMA($closes){
+		$n = count($closes);
 		$previous = $this->SMA($closes);
-		$multiplier = (2 / (count($closes) + 1) );
+		$multiplier = (2.0 / ($n + 1) );
 		$EMA = 0.0;
-		foreach($closes as $close){
-			$EMA = (($close - $previous) * $multiplier) + $previous;
+		for($i = $n-1; $i>-1; $i-=1){
+			$close = $closes[$i];
+			$EMA = ($close * $multiplier) + ($previous * (1 - $multiplier));
+			$previous = $EMA;
+		}
+		return $EMA;
+	}
+
+	//This EMA calculation uses the oldest closing price as the seed
+	public function EMA2($closes){
+		$n = count($closes);
+		$multiplier = (2.0 / ($n + 1) );
+		$previous = $closes[$n-1];
+		$EMA = 0.0;
+		for($i = $n-1; $i>-1; $i-=1){
+			$close = $closes[$i];
+			$EMA = ($close * $multiplier) + ($previous * (1 - $multiplier));
 			$previous = $EMA;
 		}
 		return $EMA;
