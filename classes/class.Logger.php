@@ -32,12 +32,12 @@ class Logger{
 		$message = $side == "buy" ? "I'm going long on ETH/USD!" : "I'm going short on ETH/USD.";
 
 		/** URL for REST request, see: https://dev.twitter.com/docs/api/1.1/ **/
-		$url = 'https://api.twitter.com/1.1/blocks/create.json';
+		$url = 'https://api.twitter.com/1.1/statuses/update.json';
 		$requestMethod = 'POST';
 
 		/** POST fields required by the URL above. See relevant docs as above **/
 		$postfields = array(
-		    'screen_name' => TWITTER_USERNAME, 
+			'id' => TWITTER_USERNAME,
 		    'status' => $message
 		);
 

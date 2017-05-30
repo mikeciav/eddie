@@ -8,11 +8,6 @@ date_default_timezone_set('America/New_York');
 $eddie = new Eddie("GDAX");
 $calc = new Calculator;
 
-DEFINE("SHORT_TERM_EMA_PERIOD", 21);
-DEFINE("LONG_TERM_EMA_PERIOD", 43);
-DEFINE("CANDLE_WIDTH", 900);
-DEFINE("MIN_SEPARATION", 0.02);
-
 $candle_width = 900; //seconds
 $now = date(DATE_ATOM, time());
 $limit_time = date(DATE_ATOM, time() - (CANDLE_WIDTH*LONG_TERM_EMA_PERIOD));
