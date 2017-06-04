@@ -148,5 +148,37 @@ class Eddie{
 	public function cancelAllOrders(){
 		return $this->callAPI("DELETE", "/orders");
 	}
+
+	//This function will repeatedly match the best bid or ask on the book until an order is fulfilled
+	//Because oldest orders are honored first, this function only cancels and replaces an order if the price changes
+	// $side = buy or sell
+	// $size = amount of ETH to sell, or amount of USD to buy ETH with (conversion will happen based on best bid price)
+	//Returns - the bid or ask price the order was honored at
+	public function placeOrder($side, $size){
+		$current_offer = -1;
+		$wait_count = 0;
+		do{
+			$ticker = $this->getTicker();
+			if($side == "buy"){
+				if($current_offer != $ticker->bid){
+					$current_offer = $ticker->bid;
+					$this->cancelAllOrders();
+					//Convert USD to amount of ETH you can buy using the best current offer
+					$this->buyETHLimit($size/$current_offer, $current_offer);
+				}
+			}
+			else{
+				if($current_offer != $ticker->ask){
+					$current_offer = $ticker->ask;
+					$this->cancelAllOrders();
+					$this->sellETHLimit($size, $current_offer);
+				}
+			}
+			sleep(1); //To avoid spamming the exchange and getting banned
+			$wait_count+=1;
+		} while(!empty($this->getOrders()) && $wait_count < MAX_WAIT_COUNT);
+
+		return $current_offer;
+	}
 }
 ?>
