@@ -90,7 +90,12 @@ class Eddie{
 	}
 
 	public function getAccounts(){
-		return $this->callAPI("GET", "/accounts");
+		$raw_accs = $this->callAPI("GET", "/accounts");
+		$accounts = array();
+		foreach($raw_accs as $account){
+			$accounts[$account->currency] = $account;
+		}
+		return $accounts;
 	}
 
 	public function getOrders(){

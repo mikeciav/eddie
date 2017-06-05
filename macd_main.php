@@ -25,13 +25,9 @@ for($i=1;$i<LONG_TERM_MACD_PERIOD+MACD_SIGNAL_PERIOD;$i+=1){
 $crossover_value = $calc->MACD($closes, SHORT_TERM_MACD_PERIOD, LONG_TERM_MACD_PERIOD, MACD_SIGNAL_PERIOD);
 echo "MACD crossover value: " . $crossover_value . "\n";
 
-$raw_accounts = $eddie->getAccounts();
-$accounts = array();
-$eth_account = null;
-$usd_account = null;
-foreach($raw_accounts as $account){
-	$accounts[$account->currency] = $account;
 }
+
+$accounts = $eddie->getAccounts();
 
 echo "\n";
 

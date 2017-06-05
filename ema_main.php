@@ -44,13 +44,7 @@ if(abs($ema_s - $ema_l) < MIN_SEPARATION){
 	exit(0);
 }
 
-$raw_accounts = $eddie->getAccounts();
-$accounts = array();
-$eth_account = null;
-$usd_account = null;
-foreach($raw_accounts as $account){
-	$accounts[$account->currency] = $account;
-}
+$accounts = $eddie->getAccounts();
 
 echo "\n";
 
