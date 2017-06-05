@@ -3,6 +3,8 @@ require_once "classes/class.Eddie.php";
 require_once "classes/class.Calculator.php";
 require_once "classes/class.Logger.php";
 
+sleep(5); //A small offset to allow the exchange to generate the candle for the last period
+
 date_default_timezone_set('America/New_York');
 
 $eddie = new Eddie("GDAX");
