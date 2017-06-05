@@ -3,20 +3,12 @@
 
 class Calculator{
 
-	public function __construct($prices=array()){
-		$this->prices = $prices;
-	}
-	
-	public function setCandles($prices){
-		$this->prices = $prices;
-	}
-
 	public function SMA($closes)
 	{
 		return array_sum($closes) / count($closes);
 	}
 
-	//This EMA calculation uses the SMA of the set of closes as the seed
+	//Calculate EMA using the SMA of the set of closes as the seed
 	public function EMA($closes){
 		$n = count($closes);
 		$previous = $this->SMA($closes);
@@ -30,7 +22,7 @@ class Calculator{
 		return $EMA;
 	}
 
-	//This EMA calculation uses the oldest closing price as the seed
+	//Calculate EMA using the oldest closing price as the seed
 	public function EMA2($closes){
 		$n = count($closes);
 		$multiplier = (2.0 / ($n + 1.0) );
