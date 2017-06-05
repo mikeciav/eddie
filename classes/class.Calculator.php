@@ -64,6 +64,30 @@ class Calculator{
 		return $macd - $cur_signal;
 	}
 
+	//Calcuate the MACDR1 of 2 histories of closing prices
+	//Return true if the signal - MACD metric has been on trend for {$min_wait_period} candles; otherwise return false
+	public function MACDR1($closes, $short_cnt, $long_cnt, $signal_cnt, $min_wait_period){
+		$trend = $macd = $this->MACDWithSignal($closes, $short_cnt, $long_cnt, $signal_cnt);
+		echo "===" . $trend;
+		for($i=0; $i<$min_wait_period-1; $i+=1){
+			array_shift($closes);
+			$macd = $this->MACDWithSignal($closes, $short_cnt, $long_cnt, $signal_cnt);
+			if($trend > 0){
+				if($macd < 0.0) return false;
+			}
+			else{
+				if($macd >= 0.0) return false;
+			}
+		}
+		return true;
+	}
+
+	//Calculate the MACDR2 of 2 histories of closing prices
+	//Return true if the amplitude of the MACD exceeds a threshold of {$min_ampl}; otherwise return false
+	public function MACDR2($closes, $short_cnt, $long_cnt, $signal_cnt, $min_ampl){
+		$short = array_slice($closes, 0, $short_cnt);
+		$long = array_slice($closes, 0, $long_cnt);
+		return (abs($this->MACD($short, $long)) > $min_ampl);
 
 	}
 }
