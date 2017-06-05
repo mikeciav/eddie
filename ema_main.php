@@ -70,7 +70,7 @@ else{
 		exit(0);
 	}
 }
-$price = $eddie->placeOrder($side, $side);
+$price = $eddie->placeOrder($side, $size);
 if($price < 0){
 	echo "Exiting - failed to fulfill an order in " . MAX_WAIT_TIME . " seconds\n";
 	exit(0);
