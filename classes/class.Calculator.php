@@ -44,18 +44,26 @@ class Calculator{
 		return $EMA;
 	}
 
-	public function MACD($closes, $short_cnt, $long_cnt, $signal_cnt){
+	//Calculate the MACD of 2 histories of closing prices
+	public function MACD($short_closes, $long_closes){
+		return $this->EMA($short_closes) - $this->EMA($long_closes);
+	}
+
+	//Calculate the difference between the MACD of 2 histories of closing prices and the MACD's {$signal_cnt} length signal
+	public function MACDWithSignal($closes, $short_cnt, $long_cnt, $signal_cnt){
 		$short = $long = $signal = [];
-		$MACD = 0.0;
+		$macd = 0.0;
 		for($i=$signal_cnt-1; $i>-1; $i-=1){
 			$short = array_slice($closes, $i, $short_cnt);
 			$long = array_slice($closes, $i, $long_cnt);
 
-			$MACD = $this->EMA($short) - $this->EMA($long);
-			array_unshift($signal,$MACD);
+			$macd = $this->MACD($short, $long);
+			array_unshift($signal,$macd);
 		}
 		$cur_signal = $this->EMA($signal);
-		return $MACD - $cur_signal;
+		return $macd - $cur_signal;
+	}
+
 
 	}
 }
