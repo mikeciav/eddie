@@ -1,5 +1,5 @@
 <?php
-define("PROJ_ROOT", getcwd());
+require_once "private/defines.php";
 
 require_once PROJ_ROOT . "/classes/class.Eddie.php";
 require_once PROJ_ROOT . "/classes/class.Calculator.php";
