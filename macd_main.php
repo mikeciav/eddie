@@ -48,7 +48,7 @@ if($crossover_value >= 0){
 	//Buy
 	echo "MACD > Signal: Buying procedure triggered\n";
 	$side = "buy";
-	if($accounts["USD"]->balance  < 0.01){ //Minimum transaction = 1 cent
+	if($accounts["USD"]->balance  < 0.05){ //Minimum transaction = 1 cent
 		echo "Exiting - No funds available.\n";
 		exit(0);
 	}
