@@ -1,6 +1,6 @@
 <?php
-require_once "/classes/class.Eddie.php";
-require_once "/classes/class.Logger.php";
+require_once PROJ_ROOT . "/classes/class.Eddie.php";
+require_once PROJ_ROOT . "/classes/class.Logger.php";
 
 date_default_timezone_set('America/New_York');
 

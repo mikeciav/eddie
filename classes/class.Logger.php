@@ -2,8 +2,8 @@
 //Logger logs a buy or sell transaction in a specified csv file
 //It can also tweet out the transaction
 
-require_once "/private/defines.php";
-require_once "/vendor/TwitterAPIExchange.php";
+require_once PROJ_ROOT . "/private/defines.php";
+require_once PROJ_ROOT . "/vendor/TwitterAPIExchange.php";
 
 class Logger{
 
