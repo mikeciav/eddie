@@ -167,8 +167,8 @@ class Eddie{
 		do{
 			$ticker = $this->getTicker();
 			if($side == "buy"){
-				if($current_offer != $ticker->bid){
-					$current_offer = $ticker->bid;
+				if($current_offer != $ticker->ask - 0.01){
+					$current_offer = $ticker->ask - 0.01;
 					$this->cancelAllOrders();
 
 					//Convert USD to amount of ETH you can buy using the best current offer
@@ -177,11 +177,11 @@ class Eddie{
 					$this->buyETHLimit($current_size, $current_offer);
 				}
 				$accounts = $this->getAccounts();
-				$continue = ($accounts["USD"]->balance >= 0.01);
+				$continue = ($accounts["USD"]->balance > 0.05);
 			}
 			else{
-				if($current_offer != $ticker->ask){
-					$current_offer = $ticker->ask;
+				if($current_offer != $ticker->bid + 0.01){
+					$current_offer = $ticker->bid + 0.01;
 					$this->cancelAllOrders();
 
 					$current_size = number_format($size, 4, '.', '');
