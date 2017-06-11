@@ -60,7 +60,6 @@ class Calculator{
 	//Return true if the signal - MACD metric has been on trend for {$min_wait_period} candles; otherwise return false
 	public function MACDR1($closes, $short_cnt, $long_cnt, $signal_cnt, $min_wait_period){
 		$trend = $macd = $this->MACDWithSignal($closes, $short_cnt, $long_cnt, $signal_cnt);
-		echo "===" . $trend;
 		for($i=0; $i<$min_wait_period-1; $i+=1){
 			array_shift($closes);
 			$macd = $this->MACDWithSignal($closes, $short_cnt, $long_cnt, $signal_cnt);

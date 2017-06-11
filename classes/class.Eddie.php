@@ -165,7 +165,6 @@ class Eddie{
 		$continue = true;
 		$wait_count = 0;
 		do{
-			echo "\nIteration {$wait_count}\n";
 			$ticker = $this->getTicker();
 			if($side == "buy"){
 				if($current_offer != $ticker->bid){
@@ -174,7 +173,7 @@ class Eddie{
 
 					//Convert USD to amount of ETH you can buy using the best current offer
 					$current_size = number_format($size / $current_offer, 4, '.', '');
-					echo "Placing order to buy " . $current_size . " ETH at $" . $current_offer;
+					echo "\nPlacing order to buy " . $current_size . " ETH at $" . $current_offer;
 					$this->buyETHLimit($current_size, $current_offer);
 				}
 				$accounts = $this->getAccounts();
@@ -186,12 +185,13 @@ class Eddie{
 					$this->cancelAllOrders();
 
 					$current_size = number_format($size, 4, '.', '');
-					echo "Placing order to sell " . $current_size . " ETH at $" . $current_offer;
+					echo "\nPlacing order to sell " . $current_size . " ETH at $" . $current_offer;
 					$this->sellETHLimit($current_size, $current_offer);
 				}
 				$accounts = $this->getAccounts();
 				$continue = ($accounts["ETH"]->balance >= 0.001);
 			}
+			echo ".";
 			sleep(1); //To avoid spamming the exchange and getting banned
 			$wait_count+=1;
 		} while($continue && $wait_count < MAX_WAIT_COUNT);

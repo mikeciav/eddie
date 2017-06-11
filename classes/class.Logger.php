@@ -44,9 +44,11 @@ class Logger{
 
 		/** Perform a POST request and echo the response **/
 		
-		echo $this->twitter->buildOauth($url, $requestMethod)
-		             ->setPostfields($postfields)
-		             ->performRequest();
+		$this->twitter->buildOauth($url, $requestMethod)
+		        ->setPostfields($postfields)
+		        ->performRequest();
+
+		echo "\nPosition change tweeted\n";
 	}
 
 }
