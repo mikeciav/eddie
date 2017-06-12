@@ -99,7 +99,7 @@ class Eddie{
 	}
 
 	public function getOrders(){
-		return $this->callAPI("GET", "/accounts");
+		return $this->callAPI("GET", "/orders");
 	}
 
 	public function getOrder($order_id){
