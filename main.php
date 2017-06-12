@@ -33,21 +33,21 @@ $size = 0;
 if($action == Strategy::BUY_STRONG || $action == Strategy::BUY_WEAK){
 	//Buy
 	$side = "buy";
-	if($accounts["USD"]->balance  < 0.06){ //Minimum transaction = 6 cents
+	if($accounts["USD"]  < 0.06){ //Minimum transaction = 6 cents
 		echo "Exiting - No funds available.\n";
 		exit(0);
 	}
-	$size = $accounts["USD"]->balance;
+	$size = $accounts["USD"];
 }
 
 else{ //$action = Strategy::SELL_STRONG || $action == SELL_WEAK
 	//Sell
 	$side = "sell";
-	if($accounts["ETH"]->balance < 0.01){ //Minimum transaction = 0.01 ETH
+	if($accounts["ETH"] < 0.01){ //Minimum transaction = 0.01 ETH
 		echo "Exiting - No funds available.\n";
 		exit(0);
 	}
-	$size = $accounts["ETH"]->balance;
+	$size = $accounts["ETH"];
 }
 
 $price = $eddie->placeOrder($side, $size);

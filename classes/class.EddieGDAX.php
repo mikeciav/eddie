@@ -78,11 +78,23 @@ class Eddie{
 
 	public function getCandles($startTime, $endTime, $granularity){
 		$params = array(
-			'start' => $startTime,
-			'end' => $endTime,
+			'start' => date(DATE_ATOM, $startTime),
+			'end' => date(DATE_ATOM, $endTime),
 			'granularity' => $granularity
 		);
 		return $this->CallAPI("GET", "/products/ETH-USD/candles", $params);
+	}
+
+	public function getClosingPrices($startTime, $endTime, $granularity){
+		$candles = $this->getCandles($startTime, $endTime, $granularity);
+		//Extract closing prices
+		//Omit current candle from these calculations as it is not closed
+		$closes = array();
+		for($i=1;$i<LONG_TERM_MACD_PERIOD+MACD_SIGNAL_PERIOD;$i+=1){
+			$closes[] = $candles[$i][4];
+		}
+
+		return $closes;
 	}
 
 	public function getTicker(){
@@ -93,13 +105,13 @@ class Eddie{
 		$raw_accs = $this->callAPI("GET", "/accounts");
 		$accounts = array();
 		foreach($raw_accs as $account){
-			$accounts[$account->currency] = $account;
+			$accounts[$account->currency] = $account->balance;
 		}
 		return $accounts;
 	}
 
 	public function getOrders(){
-		return $this->callAPI("GET", "/accounts");
+		return $this->callAPI("GET", "/orders");
 	}
 
 	public function getOrder($order_id){

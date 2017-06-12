@@ -11,21 +11,12 @@ class EMAStrategy implements Strategy{
 	public function __construct(&$exchange){
 		$this->ex = $exchange;
 
-		$now = date(DATE_ATOM, time());
-		$limit_time = date(DATE_ATOM, time() - (EMA_CROSSOVER_CANDLE_WIDTH*LONG_TERM_EMA_PERIOD));
+		$now = time();
+		$limit_time1 = time() - (EMA_CROSSOVER_CANDLE_WIDTH*LONG_TERM_EMA_PERIOD);
+		$limit_time2 = time() - (EMA_CROSSOVER_CANDLE_WIDTH*LONG_TERM_EMA_PERIOD);
 
-		$candles = $this->ex->getCandles($limit_time, $now, EMA_CROSSOVER_CANDLE_WIDTH);
-
-		//Extract closing prices
-		//Omit current candle from these calculations as it is too volatile
-		$this->closes1 = array();
-		for($i=1;$i<SHORT_TERM_EMA_PERIOD;$i+=1){
-			$this->closes1[] = $candles[$i][4];
-		}
-		$this->closes2 = array();
-		for($i=1;$i<LONG_TERM_EMA_PERIOD;$i+=1){
-			$this->closes2[] = $candles[$i][4];
-		}
+		$this->closes1 = $this->ex->getCandles($limit_time1, $now, EMA_CROSSOVER_CANDLE_WIDTH);
+		$this->closes2 = $this->ex->getCandles($limit_time2, $now, EMA_CROSSOVER_CANDLE_WIDTH);
 	}
 
 	public function evaluate(){
