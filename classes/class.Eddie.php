@@ -159,7 +159,7 @@ class Eddie{
 	// $side = buy or sell
 	// $size = amount of ETH to sell, or amount of USD to buy ETH with (conversion will happen based on best bid price)
 	//Returns - the bid or ask price the order was honored at
-	public function placeOrder($side, $size){
+	public function placeOrder($side, $size, $execute_order_flag){
 		$current_offer = -1;
 		$current_size = $size;
 		$continue = true;
@@ -169,12 +169,14 @@ class Eddie{
 			if($side == "buy"){
 				if($current_offer != $ticker->ask - 0.01){
 					$current_offer = $ticker->ask - 0.01;
-					$this->cancelAllOrders();
+					if($execute_order_flag){
+						$this->cancelAllOrders();
 
-					//Convert USD to amount of ETH you can buy using the best current offer
-					$current_size = number_format($size / $current_offer, 4, '.', '');
-					echo "\nPlacing order to buy " . $current_size . " ETH at $" . $current_offer;
-					$this->buyETHLimit($current_size, $current_offer);
+						//Convert USD to amount of ETH you can buy using the best current offer
+						$current_size = number_format($size / $current_offer, 4, '.', '');
+						echo "\nPlacing order to buy " . $current_size . " ETH at $" . $current_offer;
+						$this->buyETHLimit($current_size, $current_offer);
+					}
 				}
 				$accounts = $this->getAccounts();
 				$continue = ($accounts["USD"]->balance > 0.05);
@@ -182,11 +184,13 @@ class Eddie{
 			else{
 				if($current_offer != $ticker->bid + 0.01){
 					$current_offer = $ticker->bid + 0.01;
-					$this->cancelAllOrders();
+					if($execute_order_flag){
+						$this->cancelAllOrders();
 
-					$current_size = number_format($size, 4, '.', '');
-					echo "\nPlacing order to sell " . $current_size . " ETH at $" . $current_offer;
-					$this->sellETHLimit($current_size, $current_offer);
+						$current_size = number_format($size, 4, '.', '');
+						echo "\nPlacing order to sell " . $current_size . " ETH at $" . $current_offer;
+						$this->sellETHLimit($current_size, $current_offer);
+					}
 				}
 				$accounts = $this->getAccounts();
 				$continue = ($accounts["ETH"]->balance >= 0.001);
@@ -194,7 +198,7 @@ class Eddie{
 			echo ".";
 			sleep(1); //To avoid spamming the exchange and getting banned
 			$wait_count+=1;
-		} while($continue && $wait_count < MAX_WAIT_COUNT);
+		} while($execute_order_flag && $continue && $wait_count < MAX_WAIT_COUNT);
 
 		return $current_offer;
 	}

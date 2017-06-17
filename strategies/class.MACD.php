@@ -8,8 +8,9 @@ require_once "/classes/class.Eddie.php";
 
 class MACDStrategy implements Strategy{
 
-	public function __construct(&$exchange){
+	public function __construct(&$exchange, $mid_candle){
 		$this->ex = $exchange;
+		$inc = $mid_candle ? 0 : 1;
 
 		$now = date(DATE_ATOM, time());
 		$limit_time = date(DATE_ATOM, time() - (MACD_CROSSOVER_CANDLE_WIDTH*(LONG_TERM_MACD_PERIOD + MACD_SIGNAL_PERIOD + 3)));
@@ -19,7 +20,7 @@ class MACDStrategy implements Strategy{
 		//Extract closing prices
 		//Omit current candle from these calculations as it is too volatile
 		$this->closes = array();
-		for($i=1;$i<LONG_TERM_MACD_PERIOD+MACD_SIGNAL_PERIOD;$i+=1){
+		for($i=$inc;$i<LONG_TERM_MACD_PERIOD+MACD_SIGNAL_PERIOD+($inc-1);$i+=1){
 			$this->closes[] = $candles[$i][4];
 		}
 	}
