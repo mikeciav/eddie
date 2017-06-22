@@ -11,7 +11,7 @@ class Calculator{
 	//Calculate EMA using the SMA of the previous $close_cnt closes as the seed
 	public function EMA($closes, $n){
 		$sma_closes = array();
-		for($i = ($n-1)*2; $i>=n; $i-=1){
+		for($i = ($n-1)*2; $i>=$n; $i-=1){
 			$sma_closes[] = $closes[$i];
 		}
 		$previous = $this->SMA($sma_closes);
@@ -49,14 +49,14 @@ class Calculator{
 	public function MACDWithSignal($closes, $short_cnt, $long_cnt, $signal_cnt){
 		$short = $long = $signal = [];
 		$macd = 0.0;
-		for($i=$signal_cnt-1; $i>-1; $i-=1){
+		for($i=($signal_cnt-1)*2; $i>-1; $i-=1){
 			$short = array_slice($closes, $i, $short_cnt*2);
 			$long = array_slice($closes, $i, $long_cnt*2);
 
 			$macd = $this->MACD($short, $long, $short_cnt, $long_cnt);
 			array_unshift($signal,$macd);
 		}
-		$cur_signal = $this->EMA($signal);
+		$cur_signal = $this->EMA($signal, $signal_cnt);
 		return $macd - $cur_signal;
 	}
 
@@ -82,7 +82,7 @@ class Calculator{
 	public function MACDR2($closes, $short_cnt, $long_cnt, $signal_cnt, $min_ampl){
 		$short = array_slice($closes, 0, $short_cnt*2);
 		$long = array_slice($closes, 0, $long_cnt*2);
-		return (abs($this->MACD($short, $long)) > $min_ampl);
+		return (abs($this->MACD($short, $long, $short_cnt, $long_cnt)) > $min_ampl);
 
 	}
 }
