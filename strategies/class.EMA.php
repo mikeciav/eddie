@@ -11,19 +11,20 @@ class EMAStrategy implements Strategy{
 	public function __construct(&$exchange){
 		$this->ex = $exchange;
 
+		$candle_count = LONG_TERM_EMA_PERIOD * 2;
 		$now = date(DATE_ATOM, time());
-		$limit_time = date(DATE_ATOM, time() - (EMA_CROSSOVER_CANDLE_WIDTH*LONG_TERM_EMA_PERIOD));
+		$limit_time = date(DATE_ATOM, time() - (EMA_CROSSOVER_CANDLE_WIDTH*$candle_count));
 
 		$candles = $this->ex->getCandles($limit_time, $now, EMA_CROSSOVER_CANDLE_WIDTH);
 
 		//Extract closing prices
 		//Omit current candle from these calculations as it is too volatile
 		$this->closes1 = array();
-		for($i=1;$i<SHORT_TERM_EMA_PERIOD;$i+=1){
+		for($i=1;$i<$candle_count;$i+=1){
 			$this->closes1[] = $candles[$i][4];
 		}
 		$this->closes2 = array();
-		for($i=1;$i<LONG_TERM_EMA_PERIOD;$i+=1){
+		for($i=1;$i<$candle_count;$i+=1){
 			$this->closes2[] = $candles[$i][4];
 		}
 	}
@@ -32,8 +33,8 @@ class EMAStrategy implements Strategy{
 		$calc = new Calculator;
 
 		//Calculate SMA and EMA
-		$ema_s = $calc->EMA($this->closes1);
-		$ema_l = $calc->EMA($this->closes2);
+		$ema_s = $calc->EMA($this->closes1, SHORT_TERM_EMA_PERIOD);
+		$ema_l = $calc->EMA($this->closes2, LONG_TERM_EMA_PERIOD);
 		if($ema_s < 0.01 || $ema_l < 0.01){ //They would never actually be this low unless ETH completely tanked
 			echo "Exiting - Error in EMA calculation\n";
 			return Strategy::DO_NOTHING;

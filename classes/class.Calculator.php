@@ -8,10 +8,14 @@ class Calculator{
 		return array_sum($closes) / count($closes);
 	}
 
-	//Calculate EMA using the SMA of the set of closes as the seed
-	public function EMA($closes){
-		$n = count($closes);
-		$previous = $this->SMA($closes);
+	//Calculate EMA using the SMA of the previous $close_cnt closes as the seed
+	public function EMA($closes, $n){
+		$sma_closes = array();
+		for($i = ($n-1)*2; $i>=n; $i-=1){
+			$sma_closes[] = $closes[$i];
+		}
+		$previous = $this->SMA($sma_closes);
+
 		$multiplier = (2.0 / ($n + 1.0) );
 		$EMA = 0.0;
 		for($i = $n-1; $i>-1; $i-=1){
@@ -37,8 +41,8 @@ class Calculator{
 	}
 
 	//Calculate the MACD of 2 histories of closing prices
-	public function MACD($short_closes, $long_closes){
-		return $this->EMA2($short_closes) - $this->EMA2($long_closes);
+	public function MACD($short_closes, $long_closes, $short_cnt, $long_cnt){
+		return $this->EMA($short_closes, $short_cnt) - $this->EMA($long_closes, $long_cnt);
 	}
 
 	//Calculate the difference between the MACD of 2 histories of closing prices and the MACD's {$signal_cnt} length signal
@@ -46,10 +50,10 @@ class Calculator{
 		$short = $long = $signal = [];
 		$macd = 0.0;
 		for($i=$signal_cnt-1; $i>-1; $i-=1){
-			$short = array_slice($closes, $i, $short_cnt);
-			$long = array_slice($closes, $i, $long_cnt);
+			$short = array_slice($closes, $i, $short_cnt*2);
+			$long = array_slice($closes, $i, $long_cnt*2);
 
-			$macd = $this->MACD($short, $long);
+			$macd = $this->MACD($short, $long, $short_cnt, $long_cnt);
 			array_unshift($signal,$macd);
 		}
 		$cur_signal = $this->EMA($signal);
@@ -76,8 +80,8 @@ class Calculator{
 	//Calculate the MACDR2 of 2 histories of closing prices
 	//Return true if the amplitude of the MACD exceeds a threshold of {$min_ampl}; otherwise return false
 	public function MACDR2($closes, $short_cnt, $long_cnt, $signal_cnt, $min_ampl){
-		$short = array_slice($closes, 0, $short_cnt);
-		$long = array_slice($closes, 0, $long_cnt);
+		$short = array_slice($closes, 0, $short_cnt*2);
+		$long = array_slice($closes, 0, $long_cnt*2);
 		return (abs($this->MACD($short, $long)) > $min_ampl);
 
 	}

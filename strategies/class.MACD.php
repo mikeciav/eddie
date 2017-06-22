@@ -11,16 +11,18 @@ class MACDStrategy implements Strategy{
 	public function __construct(&$exchange, $mid_candle){
 		$this->ex = $exchange;
 		$inc = $mid_candle ? 0 : 1;
+		//Longest MACD period + the MACD signal period to reach back + 2 to reach back for MACDR1, all times 2 to get the SMA for the EMA seed
+		$candle_count = (LONG_TERM_MACD_PERIOD + MACD_SIGNAL_PERIOD + 2)*2;
 
 		$now = date(DATE_ATOM, time());
-		$limit_time = date(DATE_ATOM, time() - (MACD_CROSSOVER_CANDLE_WIDTH*(LONG_TERM_MACD_PERIOD + MACD_SIGNAL_PERIOD + 3)));
+		$limit_time = date(DATE_ATOM, time() - (MACD_CROSSOVER_CANDLE_WIDTH*$candle_count));
 
 		$candles = $this->ex->getCandles($limit_time, $now, MACD_CROSSOVER_CANDLE_WIDTH);
 
 		//Extract closing prices
 		//Omit current candle from these calculations as it is too volatile
 		$this->closes = array();
-		for($i=$inc;$i<LONG_TERM_MACD_PERIOD+MACD_SIGNAL_PERIOD+($inc-1);$i+=1){
+		for($i=$inc;$i<$candle_count;$i+=1){
 			$this->closes[] = $candles[$i][4];
 		}
 	}
