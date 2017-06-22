@@ -16,12 +16,20 @@ sleep(5); //A small offset to allow the exchange to generate the candle for the 
 $execute_order_flag = ($argc > 1 && $argv[1] == "true") ? true : false;
 $mid_candle = false;
 
-mainProc($execute_order_flag, $mid_candle);
-//If this returns, we know an order has been placed.
-//We can re-evaluate the position mid-candle for more accuracy
-sleep(MACD_CROSSOVER_CANDLE_WIDTH/2);
-$mid_candle = true;
-mainProc($execute_order_flag, $mid_candle);
+$ret = mainProc($execute_order_flag, $mid_candle);
+if(!empty($ret)){
+	echo $ret;
+}
+else{
+	//If we get here, we know an order has been placed.
+	//We can re-evaluate the position mid-candle for more accuracy
+	sleep(MACD_CROSSOVER_CANDLE_WIDTH/2);
+	$mid_candle = true;
+	$ret = mainProc($execute_order_flag, $mid_candle);
+	if(!empty($ret)){
+		echo $ret;
+	}
+}
 
 
 function mainProc($execute_order_flag, $mid_candle){
@@ -33,7 +41,7 @@ function mainProc($execute_order_flag, $mid_candle){
 	$action = $strategy->evaluate();
 
 	if($action == Strategy::DO_NOTHING){
-		exit(0);
+		return "Exiting - Strategy says to do nothing.\n";
 	}
 
 	$accounts = $eddie->getAccounts();
@@ -46,8 +54,7 @@ function mainProc($execute_order_flag, $mid_candle){
 		//Buy
 		$side = "buy";
 		if($accounts["USD"]->balance  < 0.06){ //Minimum transaction = 6 cents
-			echo "Exiting - No funds available.\n";
-			exit(0);
+			return "Exiting - No funds available.\n";
 		}
 		$size = $accounts["USD"]->balance;
 	}
@@ -56,16 +63,14 @@ function mainProc($execute_order_flag, $mid_candle){
 		//Sell
 		$side = "sell";
 		if($accounts["ETH"]->balance < 0.01){ //Minimum transaction = 0.01 ETH
-			echo "Exiting - No funds available.\n";
-			exit(0);
+			return "Exiting - No funds available.\n";
 		}
 		$size = $accounts["ETH"]->balance;
 	}
 
 	$price = $eddie->placeOrder($side, $size, $execute_order_flag);
 	if($price < 0){
-		echo "Exiting - failed to fulfill an order in a reasonable time\n";
-		exit(0);
+		return "Exiting - failed to fulfill an order in a reasonable time\n";
 	}
 
 	//Log transaction

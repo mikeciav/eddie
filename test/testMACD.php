@@ -11,8 +11,6 @@ require_once PROJ_ROOT . "/strategies/class.EMA.php";
 
 date_default_timezone_set('America/New_York');
 
-sleep(5); //A small offset to allow the exchange to generate the candle for the last period
-
 $execute_order_flag = ($argc > 1 && $argv[1] == "true") ? true : false;
 $mid_candle = false;
 
