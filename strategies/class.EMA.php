@@ -1,5 +1,5 @@
 <?php
-require_once "private/defines.php";
+require_once PROJ_ROOT . "private/defines.php";
 
 require_once PROJ_ROOT . "/strategies/StrategyInterface.php";
 
