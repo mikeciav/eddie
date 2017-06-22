@@ -7,8 +7,8 @@ require_once PROJ_ROOT . "/vendor/TwitterAPIExchange.php";
 
 class Logger{
 
-	public function __construct($path="log/log.csv"){
-		$this->path = $path;
+	public function __construct($path="/log/log.csv"){
+		$this->path = PROJ_ROOT . $path;
 
 		/** Set access tokens here - see: https://dev.twitter.com/apps/ **/
 		$settings = array(
@@ -22,7 +22,7 @@ class Logger{
 	}
 	
 	public function logTransaction($side, $size, $price){
-		$this->tweetTransaction($side, $price);
+		//$this->tweetTransaction($side, $price);
 		$date = date("Y-m-d h:i:s A", time());
 		$total = $size * $price;
 		$string = $date . "," . $side . "," . $size . "," . $price . "," . $total;

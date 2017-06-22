@@ -19,7 +19,7 @@ $mid_candle = false;
 mainProc($execute_order_flag, $mid_candle);
 //If this returns, we know an order has been placed.
 //We can re-evaluate the position mid-candle for more accuracy
-sleep(MACD_CROSSOVER_CANDLE_WIDTH/2);
+sleep(5);
 $mid_candle = true;
 mainProc($execute_order_flag, $mid_candle);
 
@@ -32,48 +32,23 @@ function mainProc($execute_order_flag, $mid_candle){
 	$strategy = new MACDStrategy($eddie, $mid_candle);
 	$action = $strategy->evaluate();
 
-	if($action == Strategy::DO_NOTHING){
-		exit(0);
+	switch($action){
+		case Strategy::DO_NOTHING:
+			echo "\nDo nothing\n";
+		break;
+		case Strategy::BUY_STRONG:
+			echo "\nBuy\n";
+		break;
+		case Strategy::SELL_STRONG:
+		default:
+			echo "\nSell\n";
+		break;
 	}
 
 	$accounts = $eddie->getAccounts();
+	var_dump($accounts);
 
 	echo "\n";
-
-	$side = "";
-	$size = 0;
-	if($action == Strategy::BUY_STRONG || $action == Strategy::BUY_WEAK){
-		//Buy
-		$side = "buy";
-		if($accounts["USD"]->balance  < 0.06){ //Minimum transaction = 6 cents
-			echo "Exiting - No funds available.\n";
-			exit(0);
-		}
-		$size = $accounts["USD"]->balance;
-	}
-
-	else{ //$action = Strategy::SELL_STRONG || $action == SELL_WEAK
-		//Sell
-		$side = "sell";
-		if($accounts["ETH"]->balance < 0.01){ //Minimum transaction = 0.01 ETH
-			echo "Exiting - No funds available.\n";
-			exit(0);
-		}
-		$size = $accounts["ETH"]->balance;
-	}
-
-	$price = $eddie->placeOrder($side, $size, $execute_order_flag);
-	if($price < 0){
-		echo "Exiting - failed to fulfill an order in a reasonable time\n";
-		exit(0);
-	}
-
-	//Log transaction
-	if($side == "buy"){
-		$size = $size/$price;
-	}
-	$log = new Logger("/log/log.csv");
-	$log->logTransaction($side, $size, $price);
 }
 
 ?>

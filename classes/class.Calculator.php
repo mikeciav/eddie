@@ -38,7 +38,7 @@ class Calculator{
 
 	//Calculate the MACD of 2 histories of closing prices
 	public function MACD($short_closes, $long_closes){
-		return $this->EMA($short_closes) - $this->EMA($long_closes);
+		return $this->EMA2($short_closes) - $this->EMA2($long_closes);
 	}
 
 	//Calculate the difference between the MACD of 2 histories of closing prices and the MACD's {$signal_cnt} length signal

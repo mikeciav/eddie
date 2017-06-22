@@ -1,10 +1,10 @@
 <?php
-require_once "private/defines.php";
+require_once PROJ_ROOT . "/private/defines.php";
 
-require_once "/strategies/StrategyInterface.php";
+require_once PROJ_ROOT . "/strategies/StrategyInterface.php";
 
-require_once "/classes/class.Calculator.php";
-require_once "/classes/class.Eddie.php";
+require_once PROJ_ROOT . "/classes/class.Calculator.php";
+require_once PROJ_ROOT . "/classes/class.Eddie.php";
 
 class EMAStrategy implements Strategy{
 
