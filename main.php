@@ -19,9 +19,9 @@ $mid_candle = false;
 mainProc($execute_order_flag, $mid_candle);
 //If this returns, we know an order has been placed.
 //We can re-evaluate the position mid-candle for more accuracy
-sleep(1800);
-$mid_candle = true;
-mainProc($execute_order_flag, $mid_candle);
+//sleep(5);
+//$mid_candle = true;
+//mainProc($execute_order_flag, $mid_candle);
 
 
 function mainProc($execute_order_flag, $mid_candle){
