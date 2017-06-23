@@ -11,6 +11,8 @@ require_once PROJ_ROOT . "/strategies/class.EMA.php";
 
 date_default_timezone_set('America/New_York');
 
+echo "====================================\nRun DateTime: " . date(DATE_ATOM, time()) . "\n====================================\n";
+
 sleep(5); //A small offset to allow the exchange to generate the candle for the last period
 
 $execute_order_flag = ($argc > 1 && $argv[1] == "true") ? true : false;
@@ -23,6 +25,7 @@ if(!empty($ret)){
 else{
 	//If we get here, we know an order has been placed.
 	//We can re-evaluate the position mid-candle for more accuracy
+	echo"\n----Checking for mid-candle swap";
 	sleep(MACD_CROSSOVER_CANDLE_WIDTH/2);
 	$mid_candle = true;
 	$ret = mainProc($execute_order_flag, $mid_candle);

@@ -24,8 +24,6 @@ class MACDStrategy implements Strategy{
 		for($i=$inc;$i<$candle_count;$i+=1){
 			$this->closes[] = $candles[$i][4];
 		}
-
-		var_dump($this->closes);
 	}
 
 	public function evaluate(){
