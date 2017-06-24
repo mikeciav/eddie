@@ -25,7 +25,7 @@ if(!empty($ret)){
 else{
 	//If we get here, we know an order has been placed.
 	//We can re-evaluate the position mid-candle for more accuracy
-	echo"\n----Checking for mid-candle swap";
+	echo"\n----Checking for mid-candle swap\n";
 	sleep(MACD_CROSSOVER_CANDLE_WIDTH/2);
 	$mid_candle = true;
 	$ret = mainProc($execute_order_flag, $mid_candle);
