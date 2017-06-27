@@ -91,6 +91,11 @@ class Eddie{
 
 	public function getAccounts(){
 		$raw_accs = $this->callAPI("GET", "/accounts");
+		//This API call likes to fail, so try it again if it does...
+		if(empty($raw_accs)){
+			sleep(2);
+			$raw_accs = $this->callAPI("GET", "/accounts");
+		}
 		$accounts = array();
 		foreach($raw_accs as $account){
 			$accounts[$account->currency] = $account;
