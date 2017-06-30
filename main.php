@@ -11,30 +11,22 @@ require_once PROJ_ROOT . "/strategies/class.EMA.php";
 
 date_default_timezone_set('America/New_York');
 
-sleep(60); //A small offset to allow the exchange to generate the candle for the last period
-
-echo "====================================\nRun DateTime: " . date(DATE_ATOM, time()) . "\n====================================\n";
+echo "\n====================================\nRun DateTime: " . date(DATE_ATOM, time()) . "\n====================================\n";
 
 $execute_order_flag = ($argc > 1 && $argv[1] == "true") ? true : false;
 $mid_candle = false;
 
 $ret = mainProc($execute_order_flag, $mid_candle);
-if(!empty($ret)){
-	echo $ret;
-}
-else{
+while(empty($ret)){
 	//If we get here, we know an order has been placed.
 	//We can re-evaluate the position mid-candle for more accuracy
-	echo "\n----Sleeping...\n";
-	sleep(MACD_CROSSOVER_CANDLE_WIDTH/2);
-	echo "\n----Checking for mid-candle swap\n";
+	//Keep re-evaluating until an order is not filled
+	echo "\n----Recalculating after order filled----\n";
 	$mid_candle = true;
 	$ret = mainProc($execute_order_flag, $mid_candle);
-	if(!empty($ret)){
-		echo $ret;
-	}
 }
-
+//An order was not placed in mainProc(), so print out the reason why
+echo $ret;
 
 function mainProc($execute_order_flag, $mid_candle){
 	$eddie = new Eddie("GDAX");
