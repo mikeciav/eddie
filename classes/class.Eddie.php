@@ -164,7 +164,7 @@ class Eddie{
 	// $side = buy or sell
 	// $size = amount of ETH to sell, or amount of USD to buy ETH with (conversion will happen based on best bid price)
 	//Returns - the bid or ask price the order was honored at
-	public function placeOrder($side, $size, $execute_order_flag, $take_some_profit){
+	public function placeOrder($side, $size, $execute_order_flag, $take_some_profit_flag){
 		$current_offer = -1;
 		$current_size = $size;
 		$continue = true;
@@ -176,7 +176,6 @@ class Eddie{
 					$current_offer = $ticker->ask - 0.01;
 					if($execute_order_flag){
 						$this->cancelAllOrders();
-
 						//Convert USD to amount of ETH you can buy using the best current offer
 						$current_size = number_format($size / $current_offer, 4, '.', '');
 						echo "\nPlacing order to buy " . $current_size . " ETH at $" . $current_offer;
@@ -191,7 +190,6 @@ class Eddie{
 					$current_offer = $ticker->bid + 0.01;
 					if($execute_order_flag){
 						$this->cancelAllOrders();
-
 						$current_size = number_format($size, 4, '.', '');
 						echo "\nPlacing order to sell " . $current_size . " ETH at $" . $current_offer;
 						$this->sellETHLimit($current_size, $current_offer);
@@ -205,12 +203,22 @@ class Eddie{
 			$wait_count+=1;
 		} while($execute_order_flag && $continue && $wait_count < MAX_WAIT_COUNT);
 
-		//If order was placed and we have profit goals
-		if(!$continue && $take_some_profit){
-			if($side == "buy")
-				$this->sellEthLimit(number_format($current_size*TAKE_PROFIT_PERCENTAGE_LONG, 4, '.', ''), number_format($current_offer*TAKE_PROFIT_AT_LONG, 2, '.', ''));
-			else
-				$this->buyEthLimit(number_format($current_size*TAKE_PROFIT_PERCENTAGE_SHORT, 4, '.', ''), number_format($current_offer*TAKE_PROFIT_AT_SHORT, 2, '.', ''));
+		//If order was placed and we have profit goals, set a limit buy/sell at the profit goal
+		if($execute_order_flag){
+			if(!$continue){
+				if($take_some_profit_flag){
+					if($side == "buy"){
+						$this->sellEthLimit(number_format($current_size*TAKE_PROFIT_PERCENTAGE_LONG, 4, '.', ''), number_format($current_offer*TAKE_PROFIT_AT_LONG, 2, '.', ''));
+					}
+					else{
+						$this->buyEthLimit(number_format($current_size*TAKE_PROFIT_PERCENTAGE_SHORT, 4, '.', ''), number_format($current_offer*TAKE_PROFIT_AT_SHORT, 2, '.', ''));
+					}
+				}
+			}
+			else{
+				$this->cancelAllOrders();
+				$current_offer = -1;
+			}
 		}
 		return $current_offer;
 	}
