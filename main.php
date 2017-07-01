@@ -14,7 +14,6 @@ date_default_timezone_set('America/New_York');
 echo "\n====================================\nRun DateTime: " . date(DATE_ATOM, time()) . "\n====================================\n";
 
 $execute_order_flag = ($argc > 1 && $argv[1] == "true") ? true : false;
-$take_some_profit = true;
 $mid_candle = false;
 
 $ret = mainProc($execute_order_flag, $mid_candle);
@@ -30,6 +29,8 @@ while(empty($ret)){
 echo $ret;
 
 function mainProc($execute_order_flag, $mid_candle){
+	$take_some_profit = true;
+
 	$eddie = new Eddie("GDAX");
 	$calc = new Calculator;
 
