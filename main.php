@@ -14,6 +14,7 @@ date_default_timezone_set('America/New_York');
 echo "\n====================================\nRun DateTime: " . date(DATE_ATOM, time()) . "\n====================================\n";
 
 $execute_order_flag = ($argc > 1 && $argv[1] == "true") ? true : false;
+$take_some_profit = true;
 $mid_candle = false;
 
 $ret = mainProc($execute_order_flag, $mid_candle);
@@ -49,22 +50,19 @@ function mainProc($execute_order_flag, $mid_candle){
 	if($action == Strategy::BUY_STRONG || $action == Strategy::BUY_WEAK){
 		//Buy
 		$side = "buy";
-		if($accounts["USD"]->balance  < 0.06){ //Minimum transaction = 6 cents
-			return "Exiting - No funds available.\n";
-		}
 		$size = $accounts["USD"]->balance;
 	}
-
 	else{ //$action = Strategy::SELL_STRONG || $action == SELL_WEAK
 		//Sell
 		$side = "sell";
-		if($accounts["ETH"]->balance < 0.01){ //Minimum transaction = 0.01 ETH
-			return "Exiting - No funds available.\n";
-		}
 		$size = $accounts["ETH"]->balance;
 	}
+	$last_position = file_get_contents("last_position");
+	if($side == $last_position){
+		return "Exiting - No position change.\n";
+	}
 
-	$price = $eddie->placeOrder($side, $size, $execute_order_flag);
+	$price = $eddie->placeOrder($side, $size, $execute_order_flag, $take_some_profit);
 	if($price < 0){
 		return "Exiting - failed to fulfill an order in a reasonable time\n";
 	}
@@ -75,6 +73,8 @@ function mainProc($execute_order_flag, $mid_candle){
 	}
 	$log = new Logger("/log/log.csv");
 	$log->logTransaction($side, $size, $price);
+
+	file_put_contents("last_position", $side);
 }
 
 ?>

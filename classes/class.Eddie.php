@@ -164,7 +164,7 @@ class Eddie{
 	// $side = buy or sell
 	// $size = amount of ETH to sell, or amount of USD to buy ETH with (conversion will happen based on best bid price)
 	//Returns - the bid or ask price the order was honored at
-	public function placeOrder($side, $size, $execute_order_flag){
+	public function placeOrder($side, $size, $execute_order_flag, $take_some_profit){
 		$current_offer = -1;
 		$current_size = $size;
 		$continue = true;
@@ -205,6 +205,13 @@ class Eddie{
 			$wait_count+=1;
 		} while($execute_order_flag && $continue && $wait_count < MAX_WAIT_COUNT);
 
+		//If order was placed and we have profit goals
+		if(!$continue && $take_some_profit){
+			if($side == "buy")
+				$this->sellEthLimit(number_format($current_size*TAKE_PROFIT_PERCENTAGE_LONG, 4, '.', ''), number_format($current_offer*TAKE_PROFIT_AT_LONG, 2, '.', ''));
+			else
+				$this->buyEthLimit(number_format($current_size*TAKE_PROFIT_PERCENTAGE_SHORT, 4, '.', ''), number_format($current_offer*TAKE_PROFIT_AT_SHORT, 2, '.', ''));
+		}
 		return $current_offer;
 	}
 }
