@@ -22,7 +22,7 @@ class Logger{
 	}
 	
 	public function logTransaction($side, $size, $price){
-		//$this->tweetTransaction($side, $price);
+		$this->tweetTransaction($side, $price);
 		$date = date("Y-m-d h:i:s A", time());
 		$total = $size * $price;
 		$string = $date . "," . $side . "," . $size . "," . $price . "," . $total;
