@@ -17,13 +17,16 @@ class MACDStrategy implements Strategy{
 		$now = date(DATE_ATOM, time());
 		$limit_time = date(DATE_ATOM, time() - (MACD_CROSSOVER_CANDLE_WIDTH*$candle_count));
 
-		$candles = $this->ex->getCandles($limit_time, $now, MACD_CROSSOVER_CANDLE_WIDTH);
-
 		//Extract closing prices
-		$this->closes = array();
-		for($i=$inc;$i<$candle_count;$i+=1){
-			$this->closes[] = $candles[$i][4];
-		}
+		//Retry if not enough candles were returned
+		do{
+			$this->closes = array();
+			$candles = $this->ex->getCandles($limit_time, $now, MACD_CROSSOVER_CANDLE_WIDTH);
+
+			for($i=$inc;$i<$candle_count;$i+=1){
+				$this->closes[] = $candles[$i][4];
+			}
+		} while(count($this->closes) < $candle_count);
 	}
 
 	public function evaluate(){
