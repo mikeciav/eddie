@@ -18,15 +18,22 @@ class MACDStrategy implements Strategy{
 		$limit_time = date(DATE_ATOM, time() - (MACD_CROSSOVER_CANDLE_WIDTH*$candle_count));
 
 		//Extract closing prices
-		//Retry if not enough candles were returned
+		//Retry if not enough candles were returned (thanks GDAX)
+		$closes;
 		do{
-			$this->closes = array();
+			$closes = array();
 			$candles = $this->ex->getCandles($limit_time, $now, MACD_CROSSOVER_CANDLE_WIDTH);
-
-			for($i=$inc;$i<$candle_count;$i+=1){
-				$this->closes[] = $candles[$i][4];
+			if(is_array($candles)){
+				for($i=$inc;$i<$candle_count+$inc;$i+=1){
+					if(isset($candles[$i])){
+						$closes[] = $candles[$i][4];
+					}
+				}
 			}
-		} while(count($this->closes) < $candle_count);
+			sleep(1);
+		} while(count($closes) < $candle_count);
+
+		$this->closes = $closes;
 	}
 
 	public function evaluate(){
