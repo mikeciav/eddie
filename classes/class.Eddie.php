@@ -215,9 +215,13 @@ class Eddie{
 				if($take_some_profit_flag){
 					if($side == "buy"){
 						$this->sellEthLimit(number_format($current_size*TAKE_PROFIT_PERCENTAGE_LONG, 4, '.', ''), number_format($current_offer*TAKE_PROFIT_AT_LONG, 2, '.', ''));
+						$this->sellEthLimit(number_format($current_size*TAKE_PROFIT_PERCENTAGE_2, 4, '.', ''),
+											number_format($current_offer*TAKE_PROFIT_AT_LONG*TAKE_PROFIT_AT_LONG, 2, '.', ''));
 					}
 					else{
 						$this->buyEthLimit(number_format($current_size*TAKE_PROFIT_PERCENTAGE_SHORT, 4, '.', ''), number_format($current_offer*TAKE_PROFIT_AT_SHORT, 2, '.', ''));
+						$this->buyEthLimit(number_format($current_size*TAKE_PROFIT_PERCENTAGE_2, 4, '.', ''),
+											number_format($current_offer*TAKE_PROFIT_AT_SHORT*TAKE_PROFIT_AT_SHORT, 2, '.', ''));
 					}
 				}
 			}
