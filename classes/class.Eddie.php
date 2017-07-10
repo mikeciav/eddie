@@ -165,7 +165,7 @@ class Eddie{
 	// $size = amount of ETH to sell, or amount of USD to buy ETH with (conversion will happen based on best bid price)
 	//Returns - the bid or ask price the order was honored at
 	public function placeOrder($side, $size, $execute_order_flag, $take_some_profit_flag){
-		$current_offer = -1;
+		$log_offer = $current_offer = -1;
 		$current_size = $size;
 		$continue = true;
 		$wait_count = 0;
@@ -174,6 +174,9 @@ class Eddie{
 			if($side == "buy"){
 				if($current_offer != $ticker->ask - 0.01){
 					$current_offer = $ticker->ask - 0.01;
+					if($log_offer < 0){
+						$log_offer = $current_offer;
+					}
 					if($execute_order_flag){
 						$this->cancelAllOrders();
 						//Convert USD to amount of ETH you can buy using the best current offer
@@ -188,6 +191,9 @@ class Eddie{
 			else{
 				if($current_offer != $ticker->bid + 0.01){
 					$current_offer = $ticker->bid + 0.01;
+					if($log_offer < 0){
+						$log_offer = $current_offer;
+					}
 					if($execute_order_flag){
 						$this->cancelAllOrders();
 						$current_size = number_format($size, 4, '.', '');
@@ -217,10 +223,10 @@ class Eddie{
 			}
 			else{
 				$this->cancelAllOrders();
-				$current_offer = -1;
+				$current_offer = $log_offer = -1;
 			}
 		}
-		return $current_offer;
+		return $log_offer;
 	}
 }
 ?>
