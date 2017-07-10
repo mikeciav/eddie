@@ -209,18 +209,21 @@ class Eddie{
 			$wait_count+=1;
 		} while($execute_order_flag && $continue && $wait_count < MAX_WAIT_COUNT);
 
-		//If order was placed and we have profit goals, set a limit buy/sell at the profit goal
+		//If order was placed and we have profit goals, set a limit buy/sell at the profit goals
 		if($execute_order_flag){
 			if(!$continue){
 				if($take_some_profit_flag){
+					$accounts = $this->getAccounts();
 					if($side == "buy"){
-						$this->sellEthLimit(number_format($current_size*TAKE_PROFIT_PERCENTAGE_LONG, 4, '.', ''), number_format($current_offer*TAKE_PROFIT_AT_LONG, 2, '.', ''));
-						$this->sellEthLimit(number_format($current_size*TAKE_PROFIT_PERCENTAGE_2, 4, '.', ''),
+						$size = $accounts["ETH"]->balance;
+						$this->sellEthLimit(number_format($size*TAKE_PROFIT_PERCENTAGE_LONG, 4, '.', ''), number_format($current_offer*TAKE_PROFIT_AT_LONG, 2, '.', ''));
+						$this->sellEthLimit(number_format($size*TAKE_PROFIT_PERCENTAGE_2, 4, '.', ''),
 											number_format($current_offer*TAKE_PROFIT_AT_LONG*TAKE_PROFIT_AT_LONG, 2, '.', ''));
 					}
 					else{
-						$this->buyEthLimit(number_format($current_size*TAKE_PROFIT_PERCENTAGE_SHORT, 4, '.', ''), number_format($current_offer*TAKE_PROFIT_AT_SHORT, 2, '.', ''));
-						$this->buyEthLimit(number_format($current_size*TAKE_PROFIT_PERCENTAGE_2, 4, '.', ''),
+						$size = ($accounts["USD"]->balance/$log_offer);
+						$this->buyEthLimit(number_format($size*TAKE_PROFIT_PERCENTAGE_SHORT, 4, '.', ''), number_format($current_offer*TAKE_PROFIT_AT_SHORT, 2, '.', ''));
+						$this->buyEthLimit(number_format($size*TAKE_PROFIT_PERCENTAGE_2, 4, '.', ''),
 											number_format($current_offer*TAKE_PROFIT_AT_SHORT*TAKE_PROFIT_AT_SHORT, 2, '.', ''));
 					}
 				}
