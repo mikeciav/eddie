@@ -41,11 +41,12 @@ class MACDStrategy implements Strategy{
 
 		//Calculate MACD Crossover
 		$crossover_value = $calc->MACDWithSignal($this->closes, SHORT_TERM_MACD_PERIOD, LONG_TERM_MACD_PERIOD, MACD_SIGNAL_PERIOD);
-		$macdr1 = $calc->MACDR1($this->closes, SHORT_TERM_MACD_PERIOD, LONG_TERM_MACD_PERIOD, MACD_SIGNAL_PERIOD, MACD_WAIT_PERIOD);
-		$macdr2 = $calc->MACDR2($this->closes, SHORT_TERM_MACD_PERIOD, LONG_TERM_MACD_PERIOD, MACD_SIGNAL_PERIOD, MACD_MIN_AMPLITUDE*$this->closes[0]);
+		//$macdr1 = $calc->MACDR1($this->closes, SHORT_TERM_MACD_PERIOD, LONG_TERM_MACD_PERIOD, MACD_SIGNAL_PERIOD, MACD_WAIT_PERIOD);
+		//$macdr2 = $calc->MACDR2($this->closes, SHORT_TERM_MACD_PERIOD, LONG_TERM_MACD_PERIOD, MACD_SIGNAL_PERIOD, MACD_MIN_AMPLITUDE*$this->closes[0]);
+		$macdr1 = $macdr2 = true;
 		echo "MACD crossover value: " . $crossover_value . "\n";
-		echo "MACDR1 value: " . $macdr1 . "\n";
-		echo "MACDR2 value: " . $macdr2 . "\n";
+		//echo "MACDR1 value: " . $macdr1 . "\n";
+		//echo "MACDR2 value: " . $macdr2 . "\n";
 
 		//Safeguards in times of stability
 		if(!$macdr1 && !$macdr2){
