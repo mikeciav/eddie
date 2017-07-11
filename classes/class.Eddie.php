@@ -231,7 +231,7 @@ class Eddie{
 						$size1 = number_format($size*TAKE_PROFIT_PERCENTAGE_SHORT, 4, '.', '');
 						$size2 = number_format($size*TAKE_PROFIT_PERCENTAGE_2, 4, '.', '');
 						$target1 = number_format($current_offer*TAKE_PROFIT_AT_SHORT, 2, '.', '');
-						$target2 = number_format($current_offer*TAKE_PROFIT_AT_SHORT*TAKE_PROFIT_AT_SHORT, 2, '.', '')
+						$target2 = number_format($current_offer*TAKE_PROFIT_AT_SHORT*TAKE_PROFIT_AT_SHORT, 2, '.', '');
 						$this->buyEthLimit($size1, $target1);
 						$this->buyEthLimit($size2, $target2);
 						file_put_contents("/data/targets", "{$target_side}|{$size1}:{$target1}|{$size2}:{$target2}");
