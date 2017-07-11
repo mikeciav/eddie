@@ -58,7 +58,7 @@ function mainProc($execute_order_flag, $mid_candle){
 		$side = "sell";
 		$size = $accounts["ETH"]->balance;
 	}
-	$last_position = file_get_contents("/data/last_position");
+	$last_position = file_get_contents("data/last_position");
 	if($side == $last_position){
 		return "Exiting - No position change.\n";
 	}
@@ -75,7 +75,7 @@ function mainProc($execute_order_flag, $mid_candle){
 	$log = new Logger("/log/log.csv");
 	$log->logTransaction($side, $size, $price, false);
 
-	file_put_contents("/data/last_position", $side);
+	file_put_contents("data/last_position", $side);
 }
 
 ?>
