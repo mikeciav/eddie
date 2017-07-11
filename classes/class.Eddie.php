@@ -209,22 +209,32 @@ class Eddie{
 			$wait_count+=1;
 		} while($execute_order_flag && $continue && $wait_count < MAX_WAIT_COUNT);
 
-		//If order was placed and we have profit goals, set a limit buy/sell at the profit goals
+		//If order was placed and we have profit goals, set a limit buy/sell at each profit goal
 		if($execute_order_flag){
 			if(!$continue){
 				if($take_some_profit_flag){
 					$accounts = $this->getAccounts();
 					if($side == "buy"){
+						$target_side = "sell";
 						$size = $accounts["ETH"]->balance;
-						$this->sellEthLimit(number_format($size*TAKE_PROFIT_PERCENTAGE_LONG, 4, '.', ''), number_format($current_offer*TAKE_PROFIT_AT_LONG, 2, '.', ''));
-						$this->sellEthLimit(number_format($size*TAKE_PROFIT_PERCENTAGE_2, 4, '.', ''),
-											number_format($current_offer*TAKE_PROFIT_AT_LONG*TAKE_PROFIT_AT_LONG, 2, '.', ''));
+						$size1 = number_format($size*TAKE_PROFIT_PERCENTAGE_LONG, 4, '.', '');
+						$size2 = number_format($size*TAKE_PROFIT_PERCENTAGE_2, 4, '.', '');
+						$target1 = number_format($current_offer*TAKE_PROFIT_AT_LONG, 2, '.', '');
+						$target2 = number_format($current_offer*TAKE_PROFIT_AT_LONG*TAKE_PROFIT_AT_LONG, 2, '.', '');
+						$this->sellEthLimit($size1, $target1);
+						$this->sellEthLimit($size2, $target2);
+						file_put_contents("/data/targets", "{$target_side}:{$size1},{$target1}:{$size2},{$target2}");
 					}
 					else{
+						$target_side = "buy";
 						$size = ($accounts["USD"]->balance/$log_offer);
-						$this->buyEthLimit(number_format($size*TAKE_PROFIT_PERCENTAGE_SHORT, 4, '.', ''), number_format($current_offer*TAKE_PROFIT_AT_SHORT, 2, '.', ''));
-						$this->buyEthLimit(number_format($size*TAKE_PROFIT_PERCENTAGE_2, 4, '.', ''),
-											number_format($current_offer*TAKE_PROFIT_AT_SHORT*TAKE_PROFIT_AT_SHORT, 2, '.', ''));
+						$size1 = number_format($size*TAKE_PROFIT_PERCENTAGE_SHORT, 4, '.', '');
+						$size2 = number_format($size*TAKE_PROFIT_PERCENTAGE_2, 4, '.', '');
+						$target1 = number_format($current_offer*TAKE_PROFIT_AT_SHORT, 2, '.', '');
+						$target2 = number_format($current_offer*TAKE_PROFIT_AT_SHORT*TAKE_PROFIT_AT_SHORT, 2, '.', '')
+						$this->buyEthLimit($size1, $target1);
+						$this->buyEthLimit($size2, $target2);
+						file_put_contents("/data/targets", "{$target_side}|{$size1}:{$target1}|{$size2}:{$target2}");
 					}
 				}
 			}

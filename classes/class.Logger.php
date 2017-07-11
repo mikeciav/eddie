@@ -21,16 +21,21 @@ class Logger{
 		$this->twitter = new TwitterAPIExchange($settings);
 	}
 	
-	public function logTransaction($side, $size, $price){
-		$this->tweetTransaction($side, $price);
+	public function logTransaction($side, $size, $price, $is_target){
+		$this->tweetTransaction($side, $price, $is_target);
 		$date = date("Y-m-d h:i:s A", time());
 		$total = $size * $price;
 		$string = $date . "," . $side . "," . $size . "," . $price . "," . $total;
 		return file_put_contents($this->path, $string.PHP_EOL , FILE_APPEND | LOCK_EX);
 	}
 
-	private function tweetTransaction($side, $price){
-		$message = ($side == "buy" ? "I'm going long on ETH/USD " : "I'm going short on ETH/USD ") . "@ $" . $price;
+	private function tweetTransaction($side, $price, $is_target){
+		if($is_target){
+			$message = "I'm taking some profit @ $" . $price;
+		}
+		else{
+			$message = "I'm going " . ($side == "buy" ? "long" : "short") . " on ETH @ $" . $price;
+		}
 
 		/** URL for REST request, see: https://dev.twitter.com/docs/api/1.1/ **/
 		$url = 'https://api.twitter.com/1.1/statuses/update.json';
