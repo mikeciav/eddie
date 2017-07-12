@@ -223,7 +223,7 @@ class Eddie{
 						$target2 = number_format($current_offer*TAKE_PROFIT_AT_LONG*TAKE_PROFIT_AT_LONG, 2, '.', '');
 						$this->sellEthLimit($size1, $target1);
 						$this->sellEthLimit($size2, $target2);
-						file_put_contents(PROJ_ROOT . "/data/targets", "{$target_side}:{$size1},{$target1}:{$size2},{$target2}");
+						file_put_contents(PROJ_ROOT . "/data/targets", "{$target_side}|{$size1}:{$target1}|{$size2}:{$target2}");
 					}
 					else{
 						$target_side = "buy";
