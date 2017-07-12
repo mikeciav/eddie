@@ -60,6 +60,10 @@ class Calculator{
 		return $macd - $cur_signal;
 	}
 
+	public function trader_MACDWithSignal($closes, $short_cnt, $long_cnt, $signal_cnt){
+		return trader_macd($closes, $short_cnt, $long_cnt, $signal_cnt);
+	}
+
 	//Calcuate the MACDR1 of 2 histories of closing prices
 	//Return true if the signal - MACD metric has been on trend for {$min_wait_period} candles; otherwise return false
 	public function MACDR1($closes, $short_cnt, $long_cnt, $signal_cnt, $min_wait_period){
