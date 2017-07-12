@@ -18,7 +18,7 @@ $high = $candles[0][2];
 $log = new Logger("/log/log.csv");
 
 //Input structure: {side}|{first target amount}:{first target price}|{second target amount}:{second target price}
-$input = file_get_contents(PROJ_ROOT . "/datatargets");
+$input = file_get_contents(PROJ_ROOT . "/data/targets");
 $input = explode('|', $input);
 if(count($input) != 3){
 	echo "\nExiting target_check - Wrong number of parameters supplied";
@@ -44,7 +44,7 @@ if(count($second) == 2){
 $input[1] = implode(':', $first);
 $input[2] = implode(':', $second);
 $output = implode('|', $input);
-file_put_contents(PROJ_ROOT . "/datatargets", $output);
+file_put_contents(PROJ_ROOT . "/data/targets", $output);
 
 
 ?>
