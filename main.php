@@ -11,31 +11,32 @@ require_once PROJ_ROOT . "/strategies/class.EMA.php";
 
 date_default_timezone_set('America/New_York');
 
+sleep(5); //initial delay to potentially be a little more random
+
 echo "\n====================================\nRun DateTime: " . date(DATE_ATOM, time()) . "\n====================================\n";
 
 $execute_order_flag = ($argc > 1 && $argv[1] == "true") ? true : false;
-$mid_candle = false;
+$use_first_candle = true;
 
-$ret = mainProc($execute_order_flag, $mid_candle);
+$ret = mainProc($execute_order_flag, $use_first_candle);
 while(empty($ret)){
 	//If we get here, we know an order has been placed.
 	//We can re-evaluate the position mid-candle for more accuracy
 	//Keep re-evaluating until an order is not filled
 	echo "\n----Recalculating after order filled----\n";
-	$mid_candle = true;
-	$ret = mainProc($execute_order_flag, $mid_candle);
+	$ret = mainProc($execute_order_flag, $use_first_candle);
 }
 //An order was not placed in mainProc(), so print out the reason why
 echo $ret;
 
-function mainProc($execute_order_flag, $mid_candle){
+function mainProc($execute_order_flag, $use_first_candle){
 	$take_some_profit = true;
 
 	$eddie = new Eddie("GDAX");
 	$calc = new Calculator;
 
 	//Replace this class with whichever strategy you would like to use
-	$strategy = new MACDStrategy($eddie, $mid_candle);
+	$strategy = new MACDStrategy($eddie, $use_first_candle);
 	$action = $strategy->evaluate();
 
 	if($action == Strategy::DO_NOTHING){
