@@ -28,7 +28,7 @@ $side = $input[0];
 $first = explode(':', $input[1]);
 if(count($first) == 2){
 	if(($side == "buy" && $low < $first[1]) || ($side == "sell" && $high > $first[1])){
-		echo "\nFirst target was reached - logging transaction";
+		echo "\n###First target was reached - logging transaction";
 		$log->logTransaction($side, $first[0], $first[1], true);
 		$first[2] = "MET";
 	}
@@ -36,7 +36,7 @@ if(count($first) == 2){
 $second = explode(':', $input[2]);
 if(count($second) == 2){
 	if(($side == "buy" && $low < $second[1]) || ($side == "sell" && $high > $second[1])){
-		echo "\nSecond target was reached - logging transaction";
+		echo "\n###Second target was reached - logging transaction";
 		$log->logTransaction($side, $second[0], $second[1], true);
 		$second[2] = "MET";
 	}
