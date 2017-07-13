@@ -45,9 +45,6 @@ class MACDStrategy implements Strategy{
 		//$macdr2 = $calc->MACDR2($this->closes, SHORT_TERM_MACD_PERIOD, LONG_TERM_MACD_PERIOD, MACD_SIGNAL_PERIOD, MACD_MIN_AMPLITUDE*$this->closes[0]);
 		$macdr1 = $macdr2 = true;
 		echo "MACD divergence: " . $crossover_value . "\n";
-
-		$crossover_value_php = $calc->trader_MACDWithSignal($this->closes, SHORT_TERM_MACD_PERIOD, LONG_TERM_MACD_PERIOD, MACD_SIGNAL_PERIOD);
-		echo "MACD divergence using built-in trader function: " . $crossover_value_php[2][0] . "\n";
 		//echo "MACDR1 value: " . $macdr1 . "\n";
 		//echo "MACDR2 value: " . $macdr2 . "\n";
 
