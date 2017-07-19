@@ -180,7 +180,7 @@ class Eddie{
 					if($execute_order_flag){
 						$this->cancelAllOrders();
 						//Convert USD to amount of ETH you can buy using the best current offer
-						$current_size = number_format($size / $current_offer, 4, '.', '');
+						$current_size = $this->formatNumber($size / $current_offer, 4);
 						echo "\nPlacing order to buy " . $current_size . " ETH at $" . $current_offer;
 						$this->buyETHLimit($current_size, $current_offer);
 					}
@@ -196,7 +196,7 @@ class Eddie{
 					}
 					if($execute_order_flag){
 						$this->cancelAllOrders();
-						$current_size = number_format($size, 4, '.', '');
+						$current_size = $this->formatNumber($size, 4);
 						echo "\nPlacing order to sell " . $current_size . " ETH at $" . $current_offer;
 						$this->sellETHLimit($current_size, $current_offer);
 					}
@@ -217,10 +217,10 @@ class Eddie{
 					if($side == "buy"){
 						$target_side = "sell";
 						$size = $accounts["ETH"]->balance;
-						$size1 = number_format($size*TAKE_PROFIT_PERCENTAGE_LONG, 4, '.', '');
-						$size2 = number_format($size*TAKE_PROFIT_PERCENTAGE_2, 4, '.', '');
-						$target1 = number_format($current_offer*TAKE_PROFIT_AT_LONG, 2, '.', '');
-						$target2 = number_format($current_offer*TAKE_PROFIT_AT_LONG*TAKE_PROFIT_AT_LONG, 2, '.', '');
+						$size1 = $this->formatNumber($size*TAKE_PROFIT_PERCENTAGE_LONG, 4);
+						$size2 = $this->formatNumber($size*TAKE_PROFIT_PERCENTAGE_2, 4);
+						$target1 = $this->formatNumber($current_offer*TAKE_PROFIT_AT_LONG, 2);
+						$target2 = $this->formatNumber($current_offer*TAKE_PROFIT_AT_LONG*TAKE_PROFIT_AT_LONG, 2);
 						$this->sellEthLimit($size1, $target1);
 						$this->sellEthLimit($size2, $target2);
 						file_put_contents(PROJ_ROOT . "/data/targets", "{$target_side}|{$size1}:{$target1}|{$size2}:{$target2}");
@@ -228,10 +228,10 @@ class Eddie{
 					else{
 						$target_side = "buy";
 						$size = ($accounts["USD"]->balance/$log_offer);
-						$size1 = number_format($size*TAKE_PROFIT_PERCENTAGE_SHORT, 4, '.', '');
-						$size2 = number_format($size*TAKE_PROFIT_PERCENTAGE_2, 4, '.', '');
-						$target1 = number_format($current_offer*TAKE_PROFIT_AT_SHORT, 2, '.', '');
-						$target2 = number_format($current_offer*TAKE_PROFIT_AT_SHORT*TAKE_PROFIT_AT_SHORT, 2, '.', '');
+						$size1 = $this->formatNumber($size*TAKE_PROFIT_PERCENTAGE_SHORT, 4);
+						$size2 = $this->formatNumber($size*TAKE_PROFIT_PERCENTAGE_2, 4);
+						$target1 = $this->formatNumber($current_offer*TAKE_PROFIT_AT_SHORT, 2);
+						$target2 = $this->formatNumber($current_offer*TAKE_PROFIT_AT_SHORT*TAKE_PROFIT_AT_SHORT, 2);
 						$this->buyEthLimit($size1, $target1);
 						$this->buyEthLimit($size2, $target2);
 						file_put_contents(PROJ_ROOT . "/data/targets", "{$target_side}|{$size1}:{$target1}|{$size2}:{$target2}");
@@ -244,6 +244,18 @@ class Eddie{
 			}
 		}
 		return $log_offer;
+	}
+
+	private function formatNumber($number, $sig_figs){
+		$number = (double)$number;
+		echo $number . "\n";
+		$factor = pow(10,$sig_figs);
+		echo $factor . "\n";
+		$number = floor($number*$factor) / $factor;
+		echo $number . "\n";
+		$number = number_format($number, $sig_figs, '.', '');
+		echo $number . "\n";
+		return $number;
 	}
 }
 ?>
