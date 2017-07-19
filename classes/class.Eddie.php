@@ -248,13 +248,9 @@ class Eddie{
 
 	private function formatNumber($number, $sig_figs){
 		$number = (double)$number;
-		echo $number . "\n";
 		$factor = pow(10,$sig_figs);
-		echo $factor . "\n";
 		$number = floor($number*$factor) / $factor;
-		echo $number . "\n";
 		$number = number_format($number, $sig_figs, '.', '');
-		echo $number . "\n";
 		return $number;
 	}
 }
