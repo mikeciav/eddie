@@ -28,6 +28,10 @@ date_default_timezone_set('America/New_York');
 			$candles = $eddie->getCandles($limit_time, $now, MACD_CROSSOVER_CANDLE_WIDTH);
 			if(is_array($candles)){
 				for($i=$inc;$i<$candle_count+$inc;$i+=1){
+					if($i == $inc){
+						echo "\nCurrent candle:\n";
+						var_dump($candles[$i]);
+					}
 					if(isset($candles[$i])){
 						$closes[] = $candles[$i][4];
 					}
