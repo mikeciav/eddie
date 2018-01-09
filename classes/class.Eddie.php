@@ -210,30 +210,41 @@ class Eddie{
 		} while($execute_order_flag && $continue && $wait_count < MAX_WAIT_COUNT);
 
 		//If order was placed and we have profit goals, set a limit buy/sell at each profit goal
-		if($execute_order_flag){
 			if(!$continue){
 				if($take_some_profit_flag){
 					$accounts = $this->getAccounts();
 					if($side == "buy"){
 						$target_side = "sell";
-						$size = $accounts["ETH"]->balance;
-						$size1 = $this->formatNumber($size*TAKE_PROFIT_PERCENTAGE_LONG, 4);
-						$size2 = $this->formatNumber($size*TAKE_PROFIT_PERCENTAGE_2, 4);
 						$target1 = $this->formatNumber($current_offer*TAKE_PROFIT_AT_LONG, 2);
 						$target2 = $this->formatNumber($current_offer*TAKE_PROFIT_AT_LONG*TAKE_PROFIT_AT_LONG, 2);
-						$this->sellEthLimit($size1, $target1);
-						$this->sellEthLimit($size2, $target2);
+						if($execute_order_flag){
+							$size = $accounts["ETH"]->balance;
+							$size1 = $this->formatNumber($size*TAKE_PROFIT_PERCENTAGE_LONG, 4);
+							$size2 = $this->formatNumber($size*TAKE_PROFIT_PERCENTAGE_2, 4);
+							$this->sellEthLimit($size1, $target1);
+							$this->sellEthLimit($size2, $target2);
+						}
+						else{
+							$size1 = 0;
+							$size2 = 0;
+						}
 						file_put_contents(PROJ_ROOT . "/data/targets", "{$target_side}|{$size1}:{$target1}|{$size2}:{$target2}");
 					}
 					else{
 						$target_side = "buy";
-						$size = ($accounts["USD"]->balance/$log_offer);
-						$size1 = $this->formatNumber($size*TAKE_PROFIT_PERCENTAGE_SHORT, 4);
-						$size2 = $this->formatNumber($size*TAKE_PROFIT_PERCENTAGE_2, 4);
 						$target1 = $this->formatNumber($current_offer*TAKE_PROFIT_AT_SHORT, 2);
 						$target2 = $this->formatNumber($current_offer*TAKE_PROFIT_AT_SHORT*TAKE_PROFIT_AT_SHORT, 2);
-						$this->buyEthLimit($size1, $target1);
-						$this->buyEthLimit($size2, $target2);
+						if($execute_order_flag){
+							$size = ($accounts["USD"]->balance/$log_offer);
+							$size1 = $this->formatNumber($size*TAKE_PROFIT_PERCENTAGE_SHORT, 4);
+							$size2 = $this->formatNumber($size*TAKE_PROFIT_PERCENTAGE_2, 4);
+							$this->buyEthLimit($size1, $target1);
+							$this->buyEthLimit($size2, $target2);
+						}
+						else{
+							$size1 = 0;
+							$size2 = 0;
+						}
 						file_put_contents(PROJ_ROOT . "/data/targets", "{$target_side}|{$size1}:{$target1}|{$size2}:{$target2}");
 					}
 				}
@@ -242,7 +253,6 @@ class Eddie{
 				$this->cancelAllOrders();
 				$current_offer = $log_offer = -1;
 			}
-		}
 		return $log_offer;
 	}
 
