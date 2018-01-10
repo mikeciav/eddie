@@ -210,7 +210,7 @@ class Eddie{
 		} while($execute_order_flag && $continue && $wait_count < MAX_WAIT_COUNT);
 
 		//If order was placed and we have profit goals, set a limit buy/sell at each profit goal
-			if(!$continue){
+			if(!$continue || !$execute_order_flag){
 				if($take_some_profit_flag){
 					$accounts = $this->getAccounts();
 					if($side == "buy"){
