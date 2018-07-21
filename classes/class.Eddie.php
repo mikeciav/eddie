@@ -31,7 +31,7 @@ class Eddie{
 	    }
 	    $signature = $this->cb->signature($url, $data_enc, $timestamp, $method);
 
-	    $url = "https://api.gdax.com" . $url;
+	    $url = "https://api.pro.coinbase.com" . $url;
 
 	    $header_params = array(
 				"CB-ACCESS-KEY: " . API_KEY,
@@ -70,6 +70,7 @@ class Eddie{
 	    //curl_setopt($curl, CURLOPT_VERBOSE, true);
 
 	    $result = curl_exec($curl);
+	    var_dump($result);
 
 	    curl_close($curl);
 
