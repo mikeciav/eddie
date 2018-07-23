@@ -70,7 +70,7 @@ class Eddie{
 	    //curl_setopt($curl, CURLOPT_VERBOSE, true);
 
 	    $result = curl_exec($curl);
-	    var_dump($result);
+	    //var_dump($result);
 
 	    curl_close($curl);
 
