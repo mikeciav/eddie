@@ -94,7 +94,7 @@ class Eddie{
 		$raw_accs = $this->callAPI("GET", "/accounts");
 		//This API call likes to fail, so try it again if it does...
 		if(empty($raw_accs)){
-			sleep(2);
+			sleep(5);
 			$raw_accs = $this->callAPI("GET", "/accounts");
 		}
 		$accounts = array();
