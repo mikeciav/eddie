@@ -70,7 +70,7 @@ class Eddie{
 	    //curl_setopt($curl, CURLOPT_VERBOSE, true);
 
 	    $result = curl_exec($curl);
-	    //var_dump($result);
+	    var_dump($result);
 
 	    curl_close($curl);
 
@@ -180,10 +180,9 @@ class Eddie{
 					}
 					if($execute_order_flag){
 						$this->cancelAllOrders();
-						//Convert USD to amount of ETH you can buy using the best current offer
-						$current_size = $this->formatNumber($size / $current_offer, 4);
+						$current_size = $this->formatNumber($size, 2);
 						echo "\nPlacing order to buy " . $current_size . " ETH at $" . $current_offer;
-						$this->buyETHLimit($current_size, $current_offer);
+						$this->buyETH($current_size, $current_offer);
 					}
 				}
 				$accounts = $this->getAccounts();
@@ -199,7 +198,7 @@ class Eddie{
 						$this->cancelAllOrders();
 						$current_size = $this->formatNumber($size, 4);
 						echo "\nPlacing order to sell " . $current_size . " ETH at $" . $current_offer;
-						$this->sellETHLimit($current_size, $current_offer);
+						$this->sellETH($current_size);
 					}
 				}
 				$accounts = $this->getAccounts();
