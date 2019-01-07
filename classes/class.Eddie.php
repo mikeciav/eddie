@@ -182,7 +182,7 @@ class Eddie{
 						$this->cancelAllOrders();
 						$current_size = $this->formatNumber($size, 2);
 						echo "\nPlacing order to buy " . $current_size . " ETH at $" . $current_offer;
-						$this->buyETH($current_size, $current_offer);
+						$this->buyETH($current_size);
 					}
 				}
 				$accounts = $this->getAccounts();
